@@ -12,7 +12,7 @@ Open `index.html` in a browser. No build step or server needed.
 - `index.css`: styles
 - `index.js`: image contour extraction, DFT, epicycle animation, and the built-in sample shapes
 
-The app ships with built-in sample shapes (heart, star, half moon, balloon, ice cream, apple, cherry, cat, dog). Pick one from the "Sample shape" dropdown, or upload, drop or paste (Ctrl/Cmd+V) your own image.
+The app ships with built-in sample shapes (snowflake, which is the default, then heart, star, half moon, balloon, ice cream, apple, cherry, cat, dog, Buddha). Pick one from the "Sample shape" dropdown, or upload, drop or paste (Ctrl/Cmd+V) your own image.
 
 ## Math background
 

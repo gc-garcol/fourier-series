@@ -535,7 +535,66 @@
     strokeBlack(g, 16);
   }
 
+  function drawSnowflake(g) {
+    var cx = 200, cy = 200, k;
+    g.lineCap = 'round';
+    g.lineJoin = 'round';
+    g.strokeStyle = '#000000';
+    g.lineWidth = 11;
+    for (k = 0; k < 6; k++) {
+      g.save();
+      g.translate(cx, cy);
+      g.rotate(k * Math.PI / 3);
+      g.beginPath();
+      g.moveTo(0, 0);                    // main arm along +x
+      g.lineTo(165, 0);
+      g.moveTo(60, 0);                   // inner pair of side branches
+      g.lineTo(100, -40);
+      g.moveTo(60, 0);
+      g.lineTo(100, 40);
+      g.moveTo(105, 0);                  // outer pair of side branches
+      g.lineTo(140, -35);
+      g.moveTo(105, 0);
+      g.lineTo(140, 35);
+      g.stroke();
+      g.restore();
+    }
+    g.save();
+    g.translate(cx, cy);                 // solid hexagonal hub
+    g.beginPath();
+    for (k = 0; k < 6; k++) {
+      var a = k * Math.PI / 3 + Math.PI / 6;
+      if (k === 0) g.moveTo(32 * Math.cos(a), 32 * Math.sin(a)); else g.lineTo(32 * Math.cos(a), 32 * Math.sin(a));
+    }
+    g.closePath();
+    g.fill();
+    g.restore();
+  }
+
+  function drawBuddha(g) {
+    fillCircle(g, 200, 50, 17);                             // ushnisha
+    fillEllipse(g, 200, 95, 42, 48, 0);                     // head
+    fillEllipse(g, 155, 108, 9, 26, 0);                     // earlobes
+    fillEllipse(g, 245, 108, 9, 26, 0);
+    g.fillRect(183, 135, 34, 40);                           // neck
+    fillPoly(g, [[200, 160], [262, 172], [290, 200], [270, 300], [130, 300], [110, 200], [138, 172]]);   // shoulders and torso
+    g.beginPath();                                          // folded arms, elbows out, forearms toward the lap
+    g.moveTo(125, 195);
+    g.lineTo(98, 285);
+    g.lineTo(160, 322);
+    g.moveTo(275, 195);
+    g.lineTo(302, 285);
+    g.lineTo(240, 322);
+    strokeBlack(g, 40);
+    fillEllipse(g, 200, 318, 58, 24, 0);                    // hands resting in the lap
+    fillEllipse(g, 200, 345, 150, 34, 0);                   // crossed legs, wide base
+    fillEllipse(g, 70, 342, 46, 28, 0);                     // knees
+    fillEllipse(g, 330, 342, 46, 28, 0);
+  }
+
   var SAMPLES = [
+    { id: 'snowflake', label: 'Snowflake', draw: drawSnowflake },
+    { id: 'buddha', label: 'Buddha', draw: drawBuddha },
     { id: 'heart', label: 'Heart', draw: drawHeart },
     { id: 'star', label: 'Star', draw: drawStar },
     { id: 'moon', label: 'Half moon', draw: drawMoon },
@@ -544,10 +603,10 @@
     { id: 'apple', label: 'Apple', draw: drawApple },
     { id: 'cherry', label: 'Cherry', draw: drawCherry },
     { id: 'cat', label: 'Cat', draw: drawCat },
-    { id: 'dog', label: 'Dog', draw: drawDog }
+    { id: 'dog', label: 'Dog', draw: drawDog },
   ];
   // SAMPLES-END
-  var DEFAULT_SAMPLE_ID = 'heart';
+  var DEFAULT_SAMPLE_ID = 'snowflake';
 
   function findSample(id) {
     for (var i = 0; i < SAMPLES.length; i++) if (SAMPLES[i].id === id) return SAMPLES[i];
