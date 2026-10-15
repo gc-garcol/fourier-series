@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fourier Series Image Drawing</title>
+  <link rel="stylesheet" href="index.css">
+  <script src="index.js" defer></script>
+</head>
+<body>
+  <header class="page-header">
+    <h1>Fourier Series Image Drawing</h1>
+    <p class="lead">Load a simple image (a dark silhouette on a plain background works best). Its outline is rebuilt using only <em>N</em> rotating circles.</p>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-label="Controls">
+      <div class="field">
+        <label for="file-input">Image</label>
+        <input type="file" id="file-input" accept="image/*">
+        <p class="note">You can also drop an image onto this page.</p>
+      </div>
+
+      <div class="field">
+        <label for="sample-select">Sample shape</label>
+        <div class="row">
+          <select id="sample-select"></select>
+          <button type="button" id="sample-btn" class="secondary">Load</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="n-input">N (number of circles)</label>
+        <div class="row">
+          <input type="number" id="n-input" min="1" max="1024" step="1" value="200" inputmode="numeric">
+          <input type="range" id="n-range" min="1" max="1024" step="1" value="200" aria-label="N slider">
+        </div>
+        <p class="note" id="n-hint">N counts the rotating circles added to the fixed centre term c<sub>0</sub>, ordered by frequency +1, &minus;1, +2, &minus;2, &hellip; So N&nbsp;=&nbsp;1 is a single circle.</p>
+      </div>
+
+      <div class="field">
+        <div class="row">
+          <button type="button" id="play-btn" aria-pressed="true">Pause</button>
+        </div>
+        <label for="speed-range">Speed: <output id="speed-out" for="speed-range">1.0&times;</output></label>
+        <input type="range" id="speed-range" min="0.1" max="4" step="0.1" value="1">
+      </div>
+
+      <div class="field checks">
+        <label class="check"><input type="checkbox" id="circles-chk" checked> Show circles</label>
+        <label class="check"><input type="checkbox" id="outline-chk" checked> Show original outline</label>
+      </div>
+
+      <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Loading sample&hellip;</p>
+    </section>
+
+    <section class="stage" aria-label="Drawing">
+      <canvas id="stage" aria-label="Animated Fourier epicycles drawing the outline of the loaded image" role="img"></canvas>
+    </section>
+  </main>
+
+  <div id="drop-overlay" class="drop-overlay" hidden>Drop image to load</div>
+</body>
+</html>
