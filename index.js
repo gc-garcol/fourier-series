@@ -753,6 +753,52 @@
     if (e.dataTransfer.files && e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
   });
 
+  // Paste an image from the clipboard (screenshots, images copied from a browser or Finder, ...).
+  function clipboardImage(cd) {
+    var i, item, list = cd && cd.items;
+    if (list) {
+      for (i = 0; i < list.length; i++) {
+        item = list[i];
+        if (item.kind === 'file' && item.type && item.type.indexOf('image/') === 0) {
+          var f = item.getAsFile();
+          if (f) return f;
+        }
+      }
+    }
+    list = cd && cd.files;
+    if (list) {
+      for (i = 0; i < list.length; i++) {
+        if (list[i].type && list[i].type.indexOf('image/') === 0) return list[i];
+      }
+    }
+    return null;
+  }
+
+  /** True when the paste target is a field where the user is typing text. */
+  function isTextEntry(el) {
+    if (!el || el.nodeType !== 1) return false;
+    if (el.isContentEditable || el.tagName === 'TEXTAREA') return true;
+    if (el.tagName !== 'INPUT') return false;
+    return ['checkbox', 'radio', 'range', 'button', 'submit', 'reset', 'file', 'image', 'color']
+      .indexOf((el.type || 'text').toLowerCase()) < 0;
+  }
+
+  window.addEventListener('paste', function (e) {
+    var file = clipboardImage(e.clipboardData);
+    if (file) {
+      e.preventDefault();
+      loadFile(file);
+      return;
+    }
+    if (isTextEntry(e.target)) return;   // let the default paste happen
+    // Brief hint only; the loaded drawing is untouched and the info line comes back afterwards.
+    var msg = 'No image found in the clipboard.';
+    setStatus(msg);
+    setTimeout(function () {
+      if (statusEl.textContent === msg) updateInfoStatus();
+    }, 2500);
+  });
+
   if (typeof ResizeObserver === 'function') new ResizeObserver(resizeCanvas).observe(canvas);
   window.addEventListener('resize', resizeCanvas);
 
