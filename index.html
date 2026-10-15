@@ -31,9 +31,13 @@
 
       <div class="field">
         <label for="n-input">N (number of circles)</label>
-        <div class="row">
+        <div class="row n-row">
           <input type="number" id="n-input" min="1" max="1024" step="1" value="200" inputmode="numeric">
           <input type="range" id="n-range" min="1" max="1024" step="1" value="200" aria-label="N slider">
+          <span class="readout" title="Relative RMS error of the outline with N circles (0% = exact)">
+            <label for="error-out">Error</label>
+            <output id="error-out" for="n-input n-range" aria-live="polite">&mdash;</output>
+          </span>
         </div>
         <p class="note" id="n-hint">N counts the rotating circles added to the fixed centre term c<sub>0</sub>, ordered by frequency +1, &minus;1, +2, &minus;2, &hellip; So N&nbsp;=&nbsp;1 is a single circle.</p>
       </div>

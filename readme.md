@@ -139,6 +139,11 @@ $$z_N(t)=c_0+\sum_{k\in S_N} c_k e^{ikt},\qquad S_N=\text{first } N \text{ of } 
 - The exponentials are orthogonal on the $M$ sample points, so any partial sum with the true coefficients is the least-squares best fit to the samples using those frequencies.
 - Terms are ordered by frequency, not by size. Sorting by amplitude $|c_k|$ would also converge quickly, but ordering by frequency makes the effect of $N$ easy to read.
 - $c_0$ is always applied and does not count towards $N$. $N=1$ is the single circle $c_1e^{it}$, and $N=M$ behaves like $N=M-1$.
+- **Error rate.** The app shows a relative RMS error next to $N$:
+
+  $$\varepsilon(N)=\sqrt{\frac{\sum_{k\notin S_N}|c_k|^2}{\sum_{k\neq 0}|c_k|^2}}$$
+
+  By Parseval's theorem, the energy $\sum_{k\notin S_N}|c_k|^2$ in the omitted terms equals the mean squared distance between the sampled points and the reconstruction. The ratio is shown as a percentage. It is measured on the $M$ resampled points, relative to the non-DC energy of the shape (so the centre $c_0$ is not counted). It falls as $N$ grows and is exactly $0\%$ once all $M-1$ terms are used. The app precomputes the energy of the tail $\sum_{k\notin S_N}|c_k|^2$ once per shape, so each $N$ costs $O(1)$.
 
 ### Epicycles: what the circles mean
 

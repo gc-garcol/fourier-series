@@ -49,6 +49,7 @@
   var circlesChk = $('circles-chk');
   var outlineChk = $('outline-chk');
   var statusEl = $('status');
+  var errorOut = $('error-out');
   var dropOverlay = $('drop-overlay');
 
   // ---- State ---------------------------------------------------------------
@@ -60,6 +61,8 @@
     py: null,
     dc: null,           // {re, im}
     terms: [],          // [{f, re, im, amp}] ordered +1, -1, +2, -2, ...
+    tailEnergy: null,   // tailEnergy[i] = sum of amp^2 over terms i..end (length terms.length + 1, last = 0)
+    totalEnergy: 0,     // tailEnergy[0]: energy of all non-DC terms
     cosT: null,         // cos/sin tables of 2*pi*j/M
     sinT: null,
     N: DEFAULT_N,
@@ -81,7 +84,26 @@
     statusEl.classList.toggle('error', !!isError);
   }
 
+  /**
+   * Relative RMS reconstruction error of the current N, as text. By Parseval's theorem the mean squared
+   * distance between the M sample points and the N-term reconstruction is the sum of |c_k|^2 over the
+   * omitted non-DC terms, so error = sqrt(omitted energy / total non-DC energy). O(1) via tailEnergy.
+   */
+  function errorText() {
+    if (!state.ready || !state.tailEnergy) return '\u2014';
+    var used = usedTerms();
+    if (used >= state.terms.length || !(state.totalEnergy > 0)) return '0%';
+    var pct = Math.sqrt(Math.max(0, state.tailEnergy[used]) / state.totalEnergy) * 100;
+    if (pct < 0.005) return '< 0.01%';   // floating-point dust or genuinely negligible
+    return pct.toFixed(pct < 1 ? 2 : 1) + '%';
+  }
+
+  function updateErrorOut() {
+    errorOut.textContent = errorText();
+  }
+
   function updateInfoStatus() {
+    updateErrorOut();
     if (!state.ready) return;
     setStatus('N = ' + state.N + ' (max ' + state.maxN + ') \u00b7 M = ' + state.M +
       ' resampled points \u00b7 ' + state.rawCount + ' traced contour points');
@@ -340,7 +362,7 @@
   function applyN(n) {
     state.N = n;
     nRange.value = String(n);
-    if (state.ready) { rebuildPath(); updateInfoStatus(); }
+    if (state.ready) { rebuildPath(); updateInfoStatus(); } else { updateErrorOut(); }
     requestDraw();
   }
 
@@ -354,6 +376,10 @@
     state.py = res.py;
     state.dc = f.dc;
     state.terms = f.terms;
+    var tail = new Float64Array(f.terms.length + 1);
+    for (var i = f.terms.length - 1; i >= 0; i--) tail[i] = tail[i + 1] + f.terms[i].amp * f.terms[i].amp;
+    state.tailEnergy = tail;
+    state.totalEnergy = tail[0];
     state.cosT = f.cosT;
     state.sinT = f.sinT;
     state.maxN = res.M;
@@ -370,6 +396,7 @@
   /** Show a load error and drop the previous shape so a stale drawing is not left under the message. */
   function showLoadError(msg) {
     state.ready = false;
+    updateErrorOut();
     setStatus(msg, true);
     requestDraw();
   }
